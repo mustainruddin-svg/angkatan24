@@ -1010,8 +1010,7 @@
 <script>
 // ── CONFIG ──
 const SHEETS_ID = '1a0Vm3RGZShg-3jSfFcu7R-Xfv_jHJdbtyG9KrErh3JE';
-const PDF_FILE_ID = '1rvwyxE1L1d-RfWLuuUle2K9mRo_63rVz';
-const PDF_URL = `https://drive.google.com/uc?export=download&id=${PDF_FILE_ID}`;
+const PDF_URL = 'https://raw.githubusercontent.com/mustainruddin-svg/angkatan24/main/Yearbooks%20Achivers%20Publ.pdf';
 
 // ── GOOGLE SHEETS FETCH ──
 async function fetchSheet(sheetName) {
@@ -1138,11 +1137,11 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs
 
 async function loadPDF() {
   try {
-    const proxyUrl = `https://drive.google.com/file/d/${PDF_FILE_ID}/preview`;
-    // Use CORS proxy approach via embed then fall back to direct
     const loadingTask = pdfjsLib.getDocument({
       url: PDF_URL,
-      withCredentials: false
+      withCredentials: false,
+      cMapUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/',
+      cMapPacked: true
     });
     pdfDoc = await loadingTask.promise;
     totalPages = pdfDoc.numPages;
@@ -1152,16 +1151,18 @@ async function loadPDF() {
     renderPage(currentPage);
   } catch(e) {
     console.warn('PDF load error:', e);
-    // Fallback: show iframe embed
+    // Fallback: tampilkan link langsung ke GitHub PDF
     const area = document.querySelector('.flipbook-canvas-area');
     area.innerHTML = `
-      <iframe 
-        src="https://drive.google.com/file/d/${PDF_FILE_ID}/preview" 
-        width="100%" 
-        height="500" 
-        style="border:none;border-radius:8px;"
-        allow="autoplay">
-      </iframe>
+      <div style="text-align:center;padding:40px;">
+        <div style="font-size:3rem;margin-bottom:16px;">📖</div>
+        <p style="font-weight:800;color:var(--text-dark);font-size:1.1rem;margin-bottom:8px;">Yearbook siap dibuka!</p>
+        <p style="color:var(--text-soft);font-size:0.9rem;margin-bottom:24px;">Klik tombol di bawah untuk membuka Yearbook Achievers 2025</p>
+        <a href="${PDF_URL}" target="_blank" rel="noopener"
+           style="background:var(--sky);color:white;padding:14px 32px;border-radius:50px;text-decoration:none;font-weight:800;font-size:0.95rem;display:inline-block;">
+          📄 Buka Yearbook
+        </a>
+      </div>
     `;
     document.getElementById('pdf-loading').style.display = 'none';
     document.getElementById('btn-prev').style.display = 'none';
@@ -1205,7 +1206,7 @@ document.getElementById('btn-next').addEventListener('click', () => {
   if (currentPage < totalPages) { currentPage++; renderPage(currentPage); }
 });
 document.getElementById('btn-fullscreen').addEventListener('click', () => {
-  window.open(`https://drive.google.com/file/d/${PDF_FILE_ID}/view`, '_blank');
+  window.open(PDF_URL, '_blank');
 });
 
 // ── SCROLL REVEAL ──
