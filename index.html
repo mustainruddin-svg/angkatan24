@@ -1016,16 +1016,35 @@ const PDF_URL = 'https://raw.githubusercontent.com/mustainruddin-svg/angkatan24/
 async function fetchSheet(sheetName) {
   const url = `https://docs.google.com/spreadsheets/d/${SHEETS_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
   const res = await fetch(url);
+  if (!res.ok) throw new Error(`HTTP ${res.status} saat fetch sheet: ${sheetName}`);
   const text = await res.text();
-  const json = JSON.parse(text.substring(47).slice(0, -2));
-  const cols = json.table.cols.map(c => c.label.toLowerCase().replace(/ /g,'_'));
-  return json.table.rows.map(row => {
+
+  // Cari posisi JSON yang valid (lebih robust dari substring hardcode)
+  const startIdx = text.indexOf('{');
+  const endIdx = text.lastIndexOf('}');
+  if (startIdx === -1 || endIdx === -1) throw new Error(`Response tidak valid dari sheet: ${sheetName}`);
+  const json = JSON.parse(text.substring(startIdx, endIdx + 1));
+  if (!json.table) throw new Error(`Tabel kosong di sheet: ${sheetName}`);
+
+  // Ambil label kolom — kalau label kosong pakai id kolom
+  const cols = json.table.cols.map((c, i) => {
+    const label = (c.label || '').trim().toLowerCase().replace(/\s+/g, '_');
+    return label || String.fromCharCode(65 + i).toLowerCase();
+  });
+
+  console.log(`[${sheetName}] Kolom:`, cols);
+
+  const rows = (json.table.rows || []).map(row => {
     const obj = {};
-    row.c.forEach((cell, i) => {
-      obj[cols[i]] = cell ? cell.v : '';
+    (row.c || []).forEach((cell, i) => {
+      obj[cols[i]] = (cell && cell.v !== null && cell.v !== undefined)
+        ? String(cell.v).trim() : '';
     });
     return obj;
-  }).filter(r => Object.values(r).some(v => v));
+  }).filter(r => Object.values(r).some(v => v !== ''));
+
+  console.log(`[${sheetName}] ${rows.length} baris:`, rows);
+  return rows;
 }
 
 // ── LOAD ABOUT ──
@@ -1040,7 +1059,7 @@ async function loadAbout() {
     if (d.tahun_lulus) document.getElementById('stat-tahun').textContent = d.tahun_lulus;
     if (d.deskripsi) document.getElementById('about-desc').textContent = d.deskripsi;
   } catch(e) {
-    console.warn('About load error:', e);
+    console.error('About load error:', e);
     document.getElementById('about-desc').textContent = 'Angkatan 24 SDIT Ar-Rahmah — generasi penerus yang berprestasi dan berakhlak mulia.';
   }
 }
@@ -1083,8 +1102,8 @@ async function loadAlbums() {
     `).join('');
 
   } catch(e) {
-    console.warn('Album load error:', e);
-    grid.innerHTML = '<div class="loading-state">Gagal memuat album. Pastikan Google Sheets sudah publik.</div>';
+    console.error('Album load error:', e);
+    grid.innerHTML = '<div class="loading-state">⚠️ Gagal memuat album.<br><small>Cek: nama sheet harus persis <b>Albums</b>, Sheets harus publik (Anyone with link).<br>Buka Console (F12) untuk detail error.</small></div>';
   }
 }
 
@@ -1120,8 +1139,8 @@ async function loadVideos() {
       `;
     }).join('');
   } catch(e) {
-    console.warn('Video load error:', e);
-    grid.innerHTML = '<div class="loading-state" style="color:rgba(255,255,255,0.7)">Gagal memuat video.</div>';
+    console.error('Video load error:', e);
+    grid.innerHTML = '<div class="loading-state" style="color:rgba(255,255,255,0.8)">⚠️ Gagal memuat video.<br><small>Cek: nama sheet harus persis <b>Videos</b> dan Sheets publik.</small></div>';
   }
 }
 
