@@ -1050,14 +1050,25 @@ async function fetchSheet(sheetName) {
 // ── LOAD ABOUT ──
 async function loadAbout() {
   try {
-    const rows = await fetchSheet('About');
+    let rows = await fetchSheet('About');
+    if (!rows.length) return;
+
+    // Normalise a/b/c/d/e → nama kolom yang benar
+    rows = rows.map(r => ({
+      angkatan_name : r.angkatan_name || r.a || '',
+      tagline       : r.tagline       || r.b || '',
+      jumlah_siswa  : r.jumlah_siswa  || r.c || '',
+      tahun_lulus   : r.tahun_lulus   || r.d || '',
+      deskripsi     : r.deskripsi     || r.e || '',
+    })).filter(r => r.angkatan_name !== 'angkatan_name' && r.angkatan_name);
+
     if (!rows.length) return;
     const d = rows[0];
     if (d.angkatan_name) document.getElementById('about-title').textContent = d.angkatan_name;
-    if (d.tagline) document.getElementById('about-tagline').textContent = d.tagline;
-    if (d.jumlah_siswa) document.getElementById('stat-siswa').textContent = d.jumlah_siswa;
-    if (d.tahun_lulus) document.getElementById('stat-tahun').textContent = d.tahun_lulus;
-    if (d.deskripsi) document.getElementById('about-desc').textContent = d.deskripsi;
+    if (d.tagline)       document.getElementById('about-tagline').textContent = d.tagline;
+    if (d.jumlah_siswa)  document.getElementById('stat-siswa').textContent = d.jumlah_siswa;
+    if (d.tahun_lulus)   document.getElementById('stat-tahun').textContent = d.tahun_lulus;
+    if (d.deskripsi)     document.getElementById('about-desc').textContent = d.deskripsi;
   } catch(e) {
     console.error('About load error:', e);
     document.getElementById('about-desc').textContent = 'Angkatan 24 SDIT Ar-Rahmah — generasi penerus yang berprestasi dan berakhlak mulia.';
@@ -1069,13 +1080,31 @@ async function loadAlbums() {
   const grid = document.getElementById('album-grid');
   const filterBar = document.getElementById('album-filter');
   try {
-    const rows = await fetchSheet('Albums');
+    let rows = await fetchSheet('Albums');
     if (!rows.length) {
       grid.innerHTML = '<div class="loading-state">Belum ada album tersedia.</div>';
       return;
     }
 
-    // Collect unique categories
+    // Normalise: kalau kolom terbaca sebagai a/b/c/d (header tidak terdeteksi),
+    // remap ke nama yang benar. Juga skip baris yang isinya nama kolom itu sendiri.
+    rows = rows.map(r => ({
+      thumbnail_url : r.thumbnail_url || r.a || '',
+      album_title   : r.album_title   || r.b || '',
+      album_link    : r.album_link    || r.c || '',
+      kategori      : r.kategori      || r.d || '',
+    })).filter(r =>
+      // buang baris header yang ikut ter-fetch
+      r.thumbnail_url !== 'thumbnail_url' && r.album_title !== 'album_title'
+      && (r.album_title || r.thumbnail_url)
+    );
+
+    if (!rows.length) {
+      grid.innerHTML = '<div class="loading-state">Belum ada album tersedia.</div>';
+      return;
+    }
+
+    // Filter tombol kategori
     const cats = [...new Set(rows.map(r => r.kategori).filter(Boolean))];
     cats.forEach(cat => {
       const btn = document.createElement('button');
@@ -1103,7 +1132,7 @@ async function loadAlbums() {
 
   } catch(e) {
     console.error('Album load error:', e);
-    grid.innerHTML = '<div class="loading-state">⚠️ Gagal memuat album.<br><small>Cek: nama sheet harus persis <b>Albums</b>, Sheets harus publik (Anyone with link).<br>Buka Console (F12) untuk detail error.</small></div>';
+    grid.innerHTML = '<div class="loading-state">⚠️ Gagal memuat album.<br><small>Pastikan Sheets sudah publik (Anyone with link).</small></div>';
   }
 }
 
@@ -1118,18 +1147,38 @@ function filterAlbums(cat) {
 async function loadVideos() {
   const grid = document.getElementById('video-grid');
   try {
-    const rows = await fetchSheet('Videos');
+    let rows = await fetchSheet('Videos');
     if (!rows.length) {
       grid.innerHTML = '<div class="loading-state" style="color:rgba(255,255,255,0.7)">Belum ada video tersedia.</div>';
       return;
     }
+
+    // Normalise: remap a/b/c ke nama kolom yang benar, skip baris header
+    rows = rows.map(r => ({
+      thumbnail_url : r.thumbnail_url || r.a || '',
+      video_title   : r.video_title   || r.b || '',
+      youtube_link  : r.youtube_link  || r.c || '',
+    })).filter(r =>
+      r.video_title !== 'video_title'
+      && r.thumbnail_url !== 'thumbnail_url'
+      && (r.video_title || r.youtube_link)
+    );
+
+    if (!rows.length) {
+      grid.innerHTML = '<div class="loading-state" style="color:rgba(255,255,255,0.7)">Belum ada video tersedia.</div>';
+      return;
+    }
+
     grid.innerHTML = rows.map(r => {
       const ytId = extractYouTubeId(r.youtube_link || '');
       const thumb = r.thumbnail_url || (ytId ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` : '');
       return `
         <a class="video-card" href="${r.youtube_link || '#'}" target="_blank" rel="noopener">
           <div class="video-thumb-wrap">
-            ${thumb ? `<img class="video-thumb" src="${thumb}" alt="${r.video_title}" loading="lazy">` : '<div style="height:175px;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:3rem;">🎬</div>'}
+            ${thumb
+              ? `<img class="video-thumb" src="${thumb}" alt="${r.video_title}" loading="lazy">`
+              : '<div style="height:175px;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:3rem;">🎬</div>'
+            }
             <div class="play-badge"><span>▶</span></div>
           </div>
           <div class="video-info">
@@ -1138,9 +1187,10 @@ async function loadVideos() {
         </a>
       `;
     }).join('');
+
   } catch(e) {
     console.error('Video load error:', e);
-    grid.innerHTML = '<div class="loading-state" style="color:rgba(255,255,255,0.8)">⚠️ Gagal memuat video.<br><small>Cek: nama sheet harus persis <b>Videos</b> dan Sheets publik.</small></div>';
+    grid.innerHTML = '<div class="loading-state" style="color:rgba(255,255,255,0.8)">⚠️ Gagal memuat video.<br><small>Pastikan Sheets sudah publik.</small></div>';
   }
 }
 
