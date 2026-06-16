@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Achievers • Angkatan 24 — SDIT Ar-Rahmah</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Nunito:wght@400;600;700;800&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+  :root {
+    --sky: #2AA8E0;
+    --sky-light: #5BC4F0;
+    --sky-dark: #1A7AAD;
+    --sky-pale: #E8F6FD;
+    --white: #FFFFFF;
+    --gold: #F5C842;
+    --gold-dark: #D4A017;
+    --gold-light: #FDE68A;
+    --text-dark: #1A3A5C;
+    --text-mid: #2D5F8A;
+    --text-soft: #5A8AAD;
+    --radius: 20px;
+    --shadow: 0 8px 32px rgba(42,168,224,0.15);
+    --shadow-gold: 0 4px 20px rgba(245,200,66,0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--sky-pale);
+    color: var(--text-dark);
+    overflow-x: hidden;
+  }
+
+  /* ── DECORATIVE CLOUDS ── */
+  .cloud {
+    position: absolute;
+    background: rgba(255,255,255,0.85);
+    border-radius: 50px;
+    pointer-events: none;
+  }
+  .cloud::before, .cloud::after {
+    content: '';
+    position: absolute;
+    background: inherit;
+    border-radius: 50%;
+  }
+  .cloud-1 { width: 100px; height: 36px; top: 60px; left: 5%; }
+  .cloud-1::before { width: 50px; height: 50px; top: -24px; left: 12px; }
+  .cloud-1::after { width: 36px; height: 36px; top: -16px; left: 44px; }
+  .cloud-2 { width: 140px; height: 44px; top: 120px; right: 8%; }
+  .cloud-2::before { width: 64px; height: 64px; top: -30px; left: 18px; }
+  .cloud-2::after { width: 48px; height: 48px; top: -22px; left: 62px; }
+  .cloud-3 { width: 80px; height: 28px; top: 200px; left: 55%; }
+  .cloud-3::before { width: 40px; height: 40px; top: -18px; left: 10px; }
+  .cloud-3::after { width: 30px; height: 30px; top: -12px; left: 38px; }
+
+  /* ── FLOATING STARS ── */
+  .star-float {
+    position: absolute;
+    font-size: 1.4rem;
+    animation: floatStar 4s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes floatStar {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-12px) rotate(15deg); }
+  }
+
+  /* ── NAVBAR ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 2px solid rgba(42,168,224,0.15);
+    padding: 12px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 20px rgba(42,168,224,0.1);
+  }
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--sky-dark);
+  }
+  .nav-brand .trophy-icon { font-size: 1.4rem; }
+  .nav-links {
+    display: flex;
+    gap: 24px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--text-mid);
+    text-decoration: none;
+    padding: 6px 14px;
+    border-radius: 20px;
+    transition: all 0.25s;
+    letter-spacing: 0.3px;
+  }
+  .nav-links a:hover {
+    background: var(--sky);
+    color: white;
+  }
+
+  /* ── HERO ── */
+  #hero {
+    position: relative;
+    min-height: 100vh;
+    background: linear-gradient(160deg, var(--sky-dark) 0%, var(--sky) 50%, var(--sky-light) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+    padding: 100px 24px 60px;
+  }
+
+  /* Diagonal white ribbon like reference */
+  .hero-ribbon {
+    position: absolute;
+    background: rgba(255,255,255,0.12);
+    width: 140%;
+    height: 200px;
+    transform: rotate(-8deg);
+    top: 38%;
+    left: -20%;
+  }
+
+  .hero-content { position: relative; z-index: 2; }
+
+  .hero-eyebrow {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    color: var(--gold-light);
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 6px 18px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+
+  .hero-trophy {
+    font-size: 5rem;
+    display: block;
+    margin-bottom: 12px;
+    animation: floatTrophy 3s ease-in-out infinite;
+    filter: drop-shadow(0 8px 16px rgba(0,0,0,0.2));
+  }
+  @keyframes floatTrophy {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .hero-script {
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(3.5rem, 10vw, 7rem);
+    color: var(--white);
+    line-height: 1;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    display: block;
+  }
+
+  .hero-angkatan {
+    font-family: 'Nunito', sans-serif;
+    font-size: clamp(1rem, 3vw, 1.5rem);
+    font-weight: 800;
+    color: var(--gold);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin: 12px 0 8px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+
+  .hero-school {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.85);
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 32px;
+  }
+
+  .hero-stars {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 36px;
+  }
+  .hero-stars span {
+    font-size: 1.6rem;
+    animation: twinkle 1.5s ease-in-out infinite;
+  }
+  .hero-stars span:nth-child(2) { animation-delay: 0.2s; }
+  .hero-stars span:nth-child(3) { animation-delay: 0.4s; }
+  .hero-stars span:nth-child(4) { animation-delay: 0.2s; }
+  .hero-stars span:nth-child(5) { animation-delay: 0s; }
+  @keyframes twinkle {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.85); }
+  }
+
+  .hero-cta {
+    display: inline-flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .btn-primary {
+    background: var(--gold);
+    color: var(--text-dark);
+    font-weight: 800;
+    font-size: 0.9rem;
+    padding: 14px 28px;
+    border-radius: 50px;
+    text-decoration: none;
+    box-shadow: 0 6px 20px rgba(245,200,66,0.5);
+    transition: all 0.25s;
+    letter-spacing: 0.3px;
+  }
+  .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 28px rgba(245,200,66,0.6);
+  }
+  .btn-ghost {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 14px 28px;
+    border-radius: 50px;
+    text-decoration: none;
+    border: 2px solid rgba(255,255,255,0.5);
+    transition: all 0.25s;
+  }
+  .btn-ghost:hover {
+    background: rgba(255,255,255,0.35);
+    transform: translateY(-3px);
+  }
+
+  /* Scroll indicator */
+  .scroll-hint {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255,255,255,0.7);
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    animation: bounce 2s infinite;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(6px); }
+  }
+
+  /* ── SECTION BASE ── */
+  section { padding: 80px 24px; }
+
+  .section-tag {
+    display: inline-block;
+    background: var(--sky);
+    color: white;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: var(--text-dark);
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+
+  .section-sub {
+    font-size: 1rem;
+    color: var(--text-soft);
+    font-weight: 600;
+    margin-bottom: 48px;
+    max-width: 560px;
+  }
+
+  .section-header { text-align: center; }
+  .section-header .section-sub { margin-left: auto; margin-right: auto; }
+
+  /* ── ABOUT ── */
+  #about {
+    background: white;
+    position: relative;
+    overflow: hidden;
+  }
+  #about::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 300px; height: 300px;
+    background: var(--sky-pale);
+    border-radius: 50%;
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+    max-width: 900px;
+    margin: 0 auto 40px;
+  }
+
+  .about-card {
+    background: var(--sky-pale);
+    border-radius: var(--radius);
+    padding: 32px 24px;
+    text-align: center;
+    border: 2px solid rgba(42,168,224,0.1);
+    transition: transform 0.25s;
+  }
+  .about-card:hover { transform: translateY(-4px); }
+  .about-card .icon { font-size: 2.5rem; margin-bottom: 12px; display: block; }
+  .about-card .value {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: var(--sky-dark);
+    display: block;
+  }
+  .about-card .label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-soft);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .about-desc {
+    max-width: 680px;
+    margin: 0 auto;
+    text-align: center;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--text-mid);
+    font-weight: 600;
+  }
+
+  /* ── GALLERY PREVIEW ── */
+  #galeri {
+    background: var(--sky-pale);
+    position: relative;
+  }
+
+  /* Polaroid-style grid like reference */
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 28px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .polaroid {
+    background: white;
+    border-radius: 4px;
+    padding: 12px 12px 40px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+    transform: rotate(var(--rot, -2deg));
+    transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    cursor: pointer;
+    position: relative;
+  }
+  .polaroid:nth-child(even) { --rot: 1.5deg; }
+  .polaroid:nth-child(3n) { --rot: -1deg; }
+  .polaroid:hover {
+    transform: rotate(0deg) translateY(-8px) scale(1.04);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.18);
+    z-index: 2;
+  }
+
+  /* tape effect */
+  .polaroid::before {
+    content: '';
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 22px;
+    background: rgba(253,230,138,0.7);
+    border-radius: 3px;
+  }
+
+  .polaroid img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+    border-radius: 2px;
+  }
+
+  .polaroid-caption {
+    position: absolute;
+    bottom: 10px;
+    left: 0; right: 0;
+    text-align: center;
+    font-family: 'Dancing Script', cursive;
+    font-size: 1rem;
+    color: var(--text-mid);
+  }
+
+  /* ── ALBUMS ── */
+  #album {
+    background: white;
+  }
+
+  .album-filter {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 36px;
+  }
+  .filter-btn {
+    padding: 8px 20px;
+    border-radius: 50px;
+    border: 2px solid var(--sky);
+    background: transparent;
+    color: var(--sky-dark);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .filter-btn.active, .filter-btn:hover {
+    background: var(--sky);
+    color: white;
+  }
+
+  .album-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .album-card {
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: all 0.3s;
+    text-decoration: none;
+    background: white;
+    display: block;
+    border: 2px solid rgba(42,168,224,0.08);
+  }
+  .album-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(42,168,224,0.2);
+  }
+  .album-thumb {
+    width: 100%;
+    height: 170px;
+    object-fit: cover;
+    display: block;
+  }
+  .album-thumb-placeholder {
+    width: 100%;
+    height: 170px;
+    background: linear-gradient(135deg, var(--sky-pale), var(--sky-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+  }
+  .album-info {
+    padding: 16px;
+  }
+  .album-tag {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--sky);
+    margin-bottom: 4px;
+  }
+  .album-title {
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    line-height: 1.4;
+  }
+  .album-link-icon {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--sky-dark);
+  }
+
+  .loading-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px;
+    color: var(--text-soft);
+    font-weight: 700;
+  }
+  .spinner {
+    display: inline-block;
+    width: 36px; height: 36px;
+    border: 3px solid var(--sky-pale);
+    border-top-color: var(--sky);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 12px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── VIDEO ── */
+  #video {
+    background: linear-gradient(160deg, var(--sky-dark) 0%, var(--sky) 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  #video .section-tag { background: rgba(255,255,255,0.2); }
+  #video .section-title { color: white; }
+  #video .section-sub { color: rgba(255,255,255,0.8); }
+
+  #video::before {
+    content: '🎬';
+    position: absolute;
+    font-size: 12rem;
+    opacity: 0.05;
+    top: -20px;
+    right: -20px;
+  }
+
+  .video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .video-card {
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    text-decoration: none;
+    display: block;
+    transition: all 0.3s;
+    backdrop-filter: blur(8px);
+  }
+  .video-card:hover {
+    transform: translateY(-6px);
+    background: rgba(255,255,255,0.18);
+  }
+  .video-thumb-wrap {
+    position: relative;
+  }
+  .video-thumb {
+    width: 100%;
+    height: 175px;
+    object-fit: cover;
+    display: block;
+  }
+  .play-badge {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.3);
+    transition: background 0.25s;
+  }
+  .video-card:hover .play-badge { background: rgba(0,0,0,0.15); }
+  .play-badge span {
+    width: 54px; height: 54px;
+    background: rgba(255,255,255,0.9);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  }
+  .video-info {
+    padding: 16px;
+  }
+  .video-title {
+    font-weight: 800;
+    color: white;
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  /* ── YEARBOOK FLIPBOOK ── */
+  #yearbook {
+    background: var(--sky-pale);
+    text-align: center;
+  }
+
+  .flipbook-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(42,168,224,0.15);
+    overflow: hidden;
+    border: 3px solid rgba(42,168,224,0.1);
+  }
+
+  .flipbook-header {
+    background: linear-gradient(90deg, var(--sky-dark), var(--sky));
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .flipbook-title-bar {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: white;
+    font-weight: 700;
+  }
+  .flipbook-badge {
+    background: var(--gold);
+    color: var(--text-dark);
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+  }
+
+  .flipbook-canvas-area {
+    padding: 32px;
+    background: #f0f4f8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 500px;
+    position: relative;
+  }
+
+  #pdf-canvas {
+    max-width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    display: block;
+  }
+
+  .pdf-loading {
+    text-align: center;
+    color: var(--text-soft);
+  }
+  .pdf-loading .spinner { display: block; margin: 0 auto 12px; }
+
+  .flipbook-controls {
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    border-top: 2px solid var(--sky-pale);
+    background: white;
+  }
+
+  .flip-btn {
+    background: var(--sky);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 10px 24px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .flip-btn:hover:not(:disabled) {
+    background: var(--sky-dark);
+    transform: scale(1.04);
+  }
+  .flip-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .page-indicator {
+    font-weight: 800;
+    color: var(--text-mid);
+    font-size: 0.95rem;
+    min-width: 100px;
+    text-align: center;
+  }
+
+  .flip-fullscreen {
+    background: var(--gold);
+    color: var(--text-dark);
+    border: none;
+    border-radius: 50px;
+    padding: 10px 20px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-left: 8px;
+  }
+  .flip-fullscreen:hover { background: var(--gold-dark); transform: scale(1.04); }
+
+  /* Page flip animation */
+  .page-flip-anim {
+    animation: pageFlip 0.35s ease-in-out;
+  }
+  @keyframes pageFlip {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.3; transform: scale(0.95) rotateY(8deg); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--sky-dark);
+    color: white;
+    text-align: center;
+    padding: 40px 24px;
+  }
+  .footer-trophy { font-size: 3rem; margin-bottom: 12px; display: block; }
+  .footer-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .footer-sub {
+    font-size: 0.88rem;
+    opacity: 0.7;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+  .footer-divider {
+    width: 60px;
+    height: 2px;
+    background: var(--gold);
+    margin: 16px auto;
+    border-radius: 2px;
+  }
+  .footer-copy {
+    font-size: 0.8rem;
+    opacity: 0.55;
+    font-weight: 600;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 10px 16px; }
+    .nav-links { gap: 12px; }
+    .nav-links a { padding: 5px 10px; font-size: 0.78rem; }
+    .about-grid { grid-template-columns: 1fr; gap: 16px; }
+    .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 18px; }
+    .album-grid { grid-template-columns: repeat(2, 1fr); }
+    .video-grid { grid-template-columns: 1fr; }
+    .flipbook-controls { flex-wrap: wrap; gap: 10px; }
+    .flipbook-canvas-area { padding: 16px; min-height: 340px; }
+    section { padding: 60px 16px; }
+  }
+
+  @media (max-width: 480px) {
+    .gallery-grid { grid-template-columns: 1fr; }
+    .album-grid { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+  }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="nav-brand">
+    <span class="trophy-icon">🏆</span>
+    Achievers • Angkatan 24
+  </div>
+  <ul class="nav-links">
+    <li><a href="#about">Tentang</a></li>
+    <li><a href="#galeri">Galeri</a></li>
+    <li><a href="#album">Album</a></li>
+    <li><a href="#video">Video</a></li>
+    <li><a href="#yearbook">Yearbook</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <!-- Clouds -->
+  <div class="cloud cloud-1"></div>
+  <div class="cloud cloud-2"></div>
+  <div class="cloud cloud-3"></div>
+
+  <!-- Floating stars -->
+  <span class="star-float" style="top:15%;left:8%;animation-delay:0s;">⭐</span>
+  <span class="star-float" style="top:25%;right:10%;animation-delay:0.8s;">✨</span>
+  <span class="star-float" style="top:70%;left:6%;animation-delay:1.2s;">🌟</span>
+  <span class="star-float" style="top:60%;right:7%;animation-delay:0.4s;">⭐</span>
+
+  <!-- Ribbon -->
+  <div class="hero-ribbon"></div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">SDIT Ar-Rahmah Makassar • 2024/2025</div>
+    <span class="hero-trophy">🏆</span>
+    <span class="hero-script">Achievers</span>
+    <div class="hero-angkatan">Angkatan ke-24</div>
+    <div class="hero-school">SDIT Ar-Rahmah • Makassar, Sulawesi Selatan</div>
+    <div class="hero-stars">
+      <span>⭐</span><span>⭐</span><span>🏅</span><span>⭐</span><span>⭐</span>
+    </div>
+    <div class="hero-cta">
+      <a href="#galeri" class="btn-primary">📷 Lihat Galeri</a>
+      <a href="#yearbook" class="btn-ghost">📖 Buka Yearbook</a>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    ↓ scroll
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-header reveal">
+    <div class="section-tag">Tentang Angkatan</div>
+    <h2 class="section-title" id="about-title">Mereka yang Bersinar</h2>
+    <p class="section-sub" id="about-tagline">Mengukir prestasi, menorehkan kenangan abadi.</p>
+  </div>
+
+  <div class="about-grid reveal">
+    <div class="about-card">
+      <span class="icon">🎓</span>
+      <span class="value" id="stat-siswa">—</span>
+      <span class="label">Siswa</span>
+    </div>
+    <div class="about-card">
+      <span class="icon">📅</span>
+      <span class="value" id="stat-tahun">—</span>
+      <span class="label">Tahun Lulus</span>
+    </div>
+    <div class="about-card">
+      <span class="icon">🏆</span>
+      <span class="value">24</span>
+      <span class="label">Angkatan</span>
+    </div>
+  </div>
+
+  <p class="about-desc reveal" id="about-desc">
+    Memuat informasi angkatan...
+  </p>
+</section>
+
+<!-- GALLERY PREVIEW -->
+<section id="galeri">
+  <div class="section-header reveal">
+    <div class="section-tag">Momen Terbaik</div>
+    <h2 class="section-title">Galeri Foto</h2>
+    <p class="section-sub">Setiap foto menyimpan cerita yang tak terlupakan.</p>
+  </div>
+
+  <div class="gallery-grid reveal" id="gallery-grid">
+    <!-- Hardcoded preview photos from Imgur -->
+    <div class="polaroid">
+      <img src="https://i.imgur.com/JsOEKh9.jpg" alt="Momen 1" loading="lazy">
+      <span class="polaroid-caption">Kenangan Indah ✨</span>
+    </div>
+    <div class="polaroid">
+      <img src="https://i.imgur.com/VjHADtb.jpg" alt="Momen 2" loading="lazy">
+      <span class="polaroid-caption">Bersama Sahabat 🌟</span>
+    </div>
+    <div class="polaroid">
+      <img src="https://i.imgur.com/3cqnEZx.jpg" alt="Momen 3" loading="lazy">
+      <span class="polaroid-caption">Prestasi Terbaik 🏆</span>
+    </div>
+    <div class="polaroid">
+      <img src="https://i.imgur.com/kG6SVu4.jpg" alt="Momen 4" loading="lazy">
+      <span class="polaroid-caption">Cita-cita Tinggi ⭐</span>
+    </div>
+    <div class="polaroid">
+      <img src="https://i.imgur.com/4eDMCU5.jpg" alt="Momen 5" loading="lazy">
+      <span class="polaroid-caption">Senyum Pemenang 😊</span>
+    </div>
+  </div>
+</section>
+
+<!-- ALBUM -->
+<section id="album">
+  <div class="section-header reveal">
+    <div class="section-tag">Koleksi Album</div>
+    <h2 class="section-title">Album Kegiatan</h2>
+    <p class="section-sub">Klik album untuk melihat koleksi foto lengkap di Google Photos.</p>
+  </div>
+
+  <div class="album-filter reveal" id="album-filter">
+    <button class="filter-btn active" data-filter="all">Semua</button>
+  </div>
+
+  <div class="album-grid" id="album-grid">
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <div>Memuat album...</div>
+    </div>
+  </div>
+</section>
+
+<!-- VIDEO -->
+<section id="video">
+  <div class="section-header reveal">
+    <div class="section-tag">Video Kenangan</div>
+    <h2 class="section-title">Rekam Jejak Achievers</h2>
+    <p class="section-sub">Klik untuk menonton di YouTube.</p>
+  </div>
+
+  <div class="video-grid" id="video-grid">
+    <div class="loading-state" style="color:rgba(255,255,255,0.7)">
+      <div class="spinner"></div>
+      <div>Memuat video...</div>
+    </div>
+  </div>
+</section>
+
+<!-- YEARBOOK FLIPBOOK -->
+<section id="yearbook">
+  <div class="section-header reveal">
+    <div class="section-tag">Buku Tahunan</div>
+    <h2 class="section-title">Yearbook Achievers 2025</h2>
+    <p class="section-sub">Kenangan yang abadi dalam satu buku. Gunakan tombol panah untuk berpindah halaman.</p>
+  </div>
+
+  <div class="flipbook-wrapper reveal">
+    <div class="flipbook-header">
+      <span class="flipbook-title-bar">📖 Yearbook · Angkatan 24 · SDIT Ar-Rahmah</span>
+      <span class="flipbook-badge">🏆 ACHIEVERS</span>
+    </div>
+
+    <div class="flipbook-canvas-area">
+      <div class="pdf-loading" id="pdf-loading">
+        <div class="spinner"></div>
+        <p style="font-weight:700;color:var(--text-mid)">Memuat Yearbook...</p>
+        <p style="font-size:0.85rem;color:var(--text-soft);margin-top:6px">Harap tunggu sebentar 📖</p>
+      </div>
+      <canvas id="pdf-canvas" style="display:none;"></canvas>
+    </div>
+
+    <div class="flipbook-controls">
+      <button class="flip-btn" id="btn-prev" disabled>← Sebelumnya</button>
+      <span class="page-indicator" id="page-indicator">— / —</span>
+      <button class="flip-btn" id="btn-next" disabled>Berikutnya →</button>
+      <button class="flip-fullscreen" id="btn-fullscreen">⛶ Layar Penuh</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-trophy">🏆</span>
+  <div class="footer-title">Achievers • Angkatan 24</div>
+  <div class="footer-sub">SDIT Ar-Rahmah Makassar — "Generasi Qurani, Berprestasi, Berakhlak Mulia"</div>
+  <div class="footer-divider"></div>
+  <div class="footer-copy">© 2025 Yayasan Ar-Rahmah Sulawesi · Media & Humas</div>
+</footer>
+
+<script>
+// ── CONFIG ──
+const SHEETS_ID = '1a0Vm3RGZShg-3jSfFcu7R-Xfv_jHJdbtyG9KrErh3JE';
+const PDF_FILE_ID = '1rvwyxE1L1d-RfWLuuUle2K9mRo_63rVz';
+const PDF_URL = `https://drive.google.com/uc?export=download&id=${PDF_FILE_ID}`;
+
+// ── GOOGLE SHEETS FETCH ──
+async function fetchSheet(sheetName) {
+  const url = `https://docs.google.com/spreadsheets/d/${SHEETS_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
+  const res = await fetch(url);
+  const text = await res.text();
+  const json = JSON.parse(text.substring(47).slice(0, -2));
+  const cols = json.table.cols.map(c => c.label.toLowerCase().replace(/ /g,'_'));
+  return json.table.rows.map(row => {
+    const obj = {};
+    row.c.forEach((cell, i) => {
+      obj[cols[i]] = cell ? cell.v : '';
+    });
+    return obj;
+  }).filter(r => Object.values(r).some(v => v));
+}
+
+// ── LOAD ABOUT ──
+async function loadAbout() {
+  try {
+    const rows = await fetchSheet('About');
+    if (!rows.length) return;
+    const d = rows[0];
+    if (d.angkatan_name) document.getElementById('about-title').textContent = d.angkatan_name;
+    if (d.tagline) document.getElementById('about-tagline').textContent = d.tagline;
+    if (d.jumlah_siswa) document.getElementById('stat-siswa').textContent = d.jumlah_siswa;
+    if (d.tahun_lulus) document.getElementById('stat-tahun').textContent = d.tahun_lulus;
+    if (d.deskripsi) document.getElementById('about-desc').textContent = d.deskripsi;
+  } catch(e) {
+    console.warn('About load error:', e);
+    document.getElementById('about-desc').textContent = 'Angkatan 24 SDIT Ar-Rahmah — generasi penerus yang berprestasi dan berakhlak mulia.';
+  }
+}
+
+// ── LOAD ALBUMS ──
+async function loadAlbums() {
+  const grid = document.getElementById('album-grid');
+  const filterBar = document.getElementById('album-filter');
+  try {
+    const rows = await fetchSheet('Albums');
+    if (!rows.length) {
+      grid.innerHTML = '<div class="loading-state">Belum ada album tersedia.</div>';
+      return;
+    }
+
+    // Collect unique categories
+    const cats = [...new Set(rows.map(r => r.kategori).filter(Boolean))];
+    cats.forEach(cat => {
+      const btn = document.createElement('button');
+      btn.className = 'filter-btn';
+      btn.dataset.filter = cat;
+      btn.textContent = cat;
+      btn.onclick = () => filterAlbums(cat);
+      filterBar.appendChild(btn);
+    });
+
+    // Render cards
+    grid.innerHTML = rows.map(r => `
+      <a class="album-card" href="${r.album_link || '#'}" target="_blank" rel="noopener" data-cat="${r.kategori || ''}">
+        ${r.thumbnail_url
+          ? `<img class="album-thumb" src="${r.thumbnail_url}" alt="${r.album_title}" loading="lazy">`
+          : `<div class="album-thumb-placeholder">📷</div>`
+        }
+        <div class="album-info">
+          <div class="album-tag">${r.kategori || 'Album'}</div>
+          <div class="album-title">${r.album_title || 'Album Foto'}</div>
+          <div class="album-link-icon">📂 Buka di Google Photos</div>
+        </div>
+      </a>
+    `).join('');
+
+  } catch(e) {
+    console.warn('Album load error:', e);
+    grid.innerHTML = '<div class="loading-state">Gagal memuat album. Pastikan Google Sheets sudah publik.</div>';
+  }
+}
+
+function filterAlbums(cat) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.filter === cat || (cat === 'all' && b.dataset.filter === 'all')));
+  document.querySelectorAll('.album-card').forEach(card => {
+    card.style.display = (cat === 'all' || card.dataset.cat === cat) ? 'block' : 'none';
+  });
+}
+
+// ── LOAD VIDEOS ──
+async function loadVideos() {
+  const grid = document.getElementById('video-grid');
+  try {
+    const rows = await fetchSheet('Videos');
+    if (!rows.length) {
+      grid.innerHTML = '<div class="loading-state" style="color:rgba(255,255,255,0.7)">Belum ada video tersedia.</div>';
+      return;
+    }
+    grid.innerHTML = rows.map(r => {
+      const ytId = extractYouTubeId(r.youtube_link || '');
+      const thumb = r.thumbnail_url || (ytId ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` : '');
+      return `
+        <a class="video-card" href="${r.youtube_link || '#'}" target="_blank" rel="noopener">
+          <div class="video-thumb-wrap">
+            ${thumb ? `<img class="video-thumb" src="${thumb}" alt="${r.video_title}" loading="lazy">` : '<div style="height:175px;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:3rem;">🎬</div>'}
+            <div class="play-badge"><span>▶</span></div>
+          </div>
+          <div class="video-info">
+            <div class="video-title">${r.video_title || 'Video Kenangan'}</div>
+          </div>
+        </a>
+      `;
+    }).join('');
+  } catch(e) {
+    console.warn('Video load error:', e);
+    grid.innerHTML = '<div class="loading-state" style="color:rgba(255,255,255,0.7)">Gagal memuat video.</div>';
+  }
+}
+
+function extractYouTubeId(url) {
+  const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/))([^&?/]+)/);
+  return m ? m[1] : null;
+}
+
+// ── PDF FLIPBOOK ──
+let pdfDoc = null, currentPage = 1, totalPages = 0;
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+async function loadPDF() {
+  try {
+    const proxyUrl = `https://drive.google.com/file/d/${PDF_FILE_ID}/preview`;
+    // Use CORS proxy approach via embed then fall back to direct
+    const loadingTask = pdfjsLib.getDocument({
+      url: PDF_URL,
+      withCredentials: false
+    });
+    pdfDoc = await loadingTask.promise;
+    totalPages = pdfDoc.numPages;
+    currentPage = 1;
+    document.getElementById('btn-prev').disabled = false;
+    document.getElementById('btn-next').disabled = false;
+    renderPage(currentPage);
+  } catch(e) {
+    console.warn('PDF load error:', e);
+    // Fallback: show iframe embed
+    const area = document.querySelector('.flipbook-canvas-area');
+    area.innerHTML = `
+      <iframe 
+        src="https://drive.google.com/file/d/${PDF_FILE_ID}/preview" 
+        width="100%" 
+        height="500" 
+        style="border:none;border-radius:8px;"
+        allow="autoplay">
+      </iframe>
+    `;
+    document.getElementById('pdf-loading').style.display = 'none';
+    document.getElementById('btn-prev').style.display = 'none';
+    document.getElementById('btn-next').style.display = 'none';
+    document.getElementById('page-indicator').textContent = 'Yearbook';
+  }
+}
+
+async function renderPage(num) {
+  const canvas = document.getElementById('pdf-canvas');
+  const loading = document.getElementById('pdf-loading');
+
+  loading.style.display = 'block';
+  canvas.style.display = 'none';
+
+  const page = await pdfDoc.getPage(num);
+  const viewport = page.getViewport({ scale: 1.4 });
+
+  canvas.width = viewport.width;
+  canvas.height = viewport.height;
+
+  await page.render({
+    canvasContext: canvas.getContext('2d'),
+    viewport
+  }).promise;
+
+  loading.style.display = 'none';
+  canvas.style.display = 'block';
+  canvas.classList.add('page-flip-anim');
+  canvas.addEventListener('animationend', () => canvas.classList.remove('page-flip-anim'), { once: true });
+
+  document.getElementById('page-indicator').textContent = `Halaman ${num} / ${totalPages}`;
+  document.getElementById('btn-prev').disabled = num <= 1;
+  document.getElementById('btn-next').disabled = num >= totalPages;
+}
+
+document.getElementById('btn-prev').addEventListener('click', () => {
+  if (currentPage > 1) { currentPage--; renderPage(currentPage); }
+});
+document.getElementById('btn-next').addEventListener('click', () => {
+  if (currentPage < totalPages) { currentPage++; renderPage(currentPage); }
+});
+document.getElementById('btn-fullscreen').addEventListener('click', () => {
+  window.open(`https://drive.google.com/file/d/${PDF_FILE_ID}/view`, '_blank');
+});
+
+// ── SCROLL REVEAL ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ── INIT ──
+loadAbout();
+loadAlbums();
+loadVideos();
+loadPDF();
+</script>
+</body>
+</html>
