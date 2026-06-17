@@ -811,6 +811,392 @@
     opacity: 1;
     transform: translateY(0);
   }
+
+  /* ── KOMENTAR ALUMNI ── */
+  #komentar {
+    background: linear-gradient(160deg, #f0f9ff 0%, var(--sky-pale) 100%);
+    position: relative;
+  }
+
+  .comment-form-wrap {
+    max-width: 720px;
+    margin: 0 auto 40px;
+  }
+
+  .comment-form-card {
+    background: white;
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: 0 8px 40px rgba(42,168,224,0.12);
+    border: 2px solid rgba(42,168,224,0.1);
+  }
+
+  .comment-form-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    color: var(--text-dark);
+    margin-bottom: 20px;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .comment-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid rgba(42,168,224,0.2);
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .comment-input:focus { border-color: var(--sky); }
+
+  .comment-textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid rgba(42,168,224,0.2);
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s;
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+  .comment-textarea:focus { border-color: var(--sky); }
+
+  .comment-form-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .char-count {
+    font-size: 0.78rem;
+    color: var(--text-soft);
+    font-weight: 700;
+  }
+
+  .btn-kirim {
+    background: var(--sky);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 12px 28px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.25s;
+    box-shadow: 0 4px 16px rgba(42,168,224,0.3);
+  }
+  .btn-kirim:hover:not(:disabled) {
+    background: var(--sky-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(42,168,224,0.4);
+  }
+  .btn-kirim:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .comment-notice {
+    margin-top: 14px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 700;
+  }
+  .notice-success { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+  .notice-error   { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+
+  /* List komentar */
+  .comment-list-wrap {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .comment-list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 0 4px;
+  }
+
+  #comment-count-label {
+    font-weight: 800;
+    color: var(--text-mid);
+    font-size: 0.95rem;
+  }
+
+  .btn-refresh {
+    background: transparent;
+    border: 2px solid var(--sky);
+    color: var(--sky-dark);
+    border-radius: 50px;
+    padding: 6px 16px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-refresh:hover { background: var(--sky); color: white; }
+
+  .comment-loading {
+    text-align: center;
+    padding: 48px;
+    color: var(--text-soft);
+    font-weight: 700;
+  }
+
+  .comment-empty {
+    text-align: center;
+    padding: 48px;
+    color: var(--text-soft);
+    font-size: 1rem;
+    font-weight: 700;
+    background: white;
+    border-radius: 20px;
+    border: 2px dashed rgba(42,168,224,0.2);
+  }
+
+  /* Tiap komentar */
+  .comment-item {
+    background: white;
+    border-radius: 18px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 20px rgba(42,168,224,0.08);
+    border: 1px solid rgba(42,168,224,0.08);
+    transition: transform 0.2s;
+    animation: fadeUp 0.4s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .comment-item:hover { transform: translateY(-2px); }
+
+  .comment-item-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .comment-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--sky), var(--sky-dark));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: white;
+    flex-shrink: 0;
+    font-family: 'Playfair Display', serif;
+  }
+
+  .comment-meta {
+    flex: 1;
+  }
+
+  .comment-author {
+    font-weight: 800;
+    color: var(--text-dark);
+    font-size: 0.95rem;
+  }
+
+  .comment-kelas {
+    display: inline-block;
+    background: var(--sky-pale);
+    color: var(--sky-dark);
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 2px 9px;
+    border-radius: 10px;
+    margin-left: 6px;
+    letter-spacing: 0.5px;
+  }
+
+  .comment-time {
+    font-size: 0.75rem;
+    color: var(--text-soft);
+    font-weight: 600;
+  }
+
+  .comment-text {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--text-mid);
+    font-weight: 600;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* Tombol balas */
+  .comment-actions {
+    margin-top: 12px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .btn-balas {
+    background: transparent;
+    border: 1.5px solid rgba(42,168,224,0.3);
+    color: var(--sky-dark);
+    border-radius: 50px;
+    padding: 5px 14px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-balas:hover { background: var(--sky-pale); border-color: var(--sky); }
+
+  /* Form balas inline */
+  .reply-form {
+    margin-top: 14px;
+    background: var(--sky-pale);
+    border-radius: 14px;
+    padding: 16px;
+    border: 1.5px solid rgba(42,168,224,0.15);
+    display: none;
+  }
+  .reply-form.open { display: block; animation: fadeUp 0.25s ease; }
+
+  .reply-form-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .reply-input-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .reply-name-input {
+    flex: 0 0 160px;
+    padding: 9px 12px;
+    border: 1.5px solid rgba(42,168,224,0.25);
+    border-radius: 10px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.84rem;
+    font-weight: 600;
+    outline: none;
+  }
+  .reply-name-input:focus { border-color: var(--sky); }
+
+  .reply-textarea {
+    flex: 1;
+    padding: 9px 12px;
+    border: 1.5px solid rgba(42,168,224,0.25);
+    border-radius: 10px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.84rem;
+    font-weight: 600;
+    resize: none;
+    outline: none;
+    min-height: 70px;
+  }
+  .reply-textarea:focus { border-color: var(--sky); }
+
+  .reply-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .btn-reply-send {
+    background: var(--sky);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 8px 20px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-reply-send:hover:not(:disabled) { background: var(--sky-dark); }
+  .btn-reply-send:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .btn-reply-cancel {
+    background: transparent;
+    border: 1.5px solid rgba(42,168,224,0.25);
+    color: var(--text-soft);
+    border-radius: 50px;
+    padding: 8px 16px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+  }
+
+  /* Balasan */
+  .replies-wrap {
+    margin-top: 14px;
+    margin-left: 20px;
+    padding-left: 18px;
+    border-left: 3px solid rgba(42,168,224,0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .reply-item {
+    background: var(--sky-pale);
+    border-radius: 12px;
+    padding: 12px 16px;
+    animation: fadeUp 0.3s ease;
+  }
+
+  .reply-author {
+    font-weight: 800;
+    color: var(--sky-dark);
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+  }
+
+  .reply-text {
+    font-size: 0.88rem;
+    color: var(--text-mid);
+    font-weight: 600;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .reply-time {
+    font-size: 0.7rem;
+    color: var(--text-soft);
+    margin-top: 4px;
+    font-weight: 600;
+  }
+
+  @media (max-width: 600px) {
+    .field-row { grid-template-columns: 1fr; }
+    .comment-form-card { padding: 20px 16px; }
+    .reply-input-row { flex-direction: column; }
+    .reply-name-input { flex: none; width: 100%; }
+    .comment-list-wrap, .comment-form-wrap { margin: 0 0 24px; }
+  }
 </style>
 </head>
 <body>
@@ -827,6 +1213,7 @@
     <li><a href="#album">Album</a></li>
     <li><a href="#video">Video</a></li>
     <li><a href="#yearbook">Yearbook</a></li>
+    <li><a href="#komentar">💬 Sapa Alumni</a></li>
   </ul>
 </nav>
 
@@ -847,7 +1234,7 @@
   <div class="hero-ribbon"></div>
 
   <div class="hero-content">
-    <div class="hero-eyebrow">SDIT Ar-Rahmah Makassar • 2024/2025</div>
+    <div class="hero-eyebrow">SDIT Ar-Rahmah Makassar • 2025/2026</div>
     <span class="hero-trophy">🏆</span>
     <span class="hero-script">Achievers</span>
     <div class="hero-angkatan">Angkatan ke-24</div>
@@ -970,7 +1357,7 @@
 <section id="yearbook">
   <div class="section-header reveal">
     <div class="section-tag">Buku Tahunan</div>
-    <h2 class="section-title">Yearbook Achievers 2025</h2>
+    <h2 class="section-title">Yearbook Achievers 2025/2026</h2>
     <p class="section-sub">Kenangan yang abadi dalam satu buku. Gunakan tombol panah untuk berpindah halaman.</p>
   </div>
 
@@ -998,13 +1385,57 @@
   </div>
 </section>
 
+<!-- KOMENTAR ALUMNI -->
+<section id="komentar">
+  <div class="section-header reveal">
+    <div class="section-tag">Ruang Alumni</div>
+    <h2 class="section-title">Sapa Sahabatmu 👋</h2>
+    <p class="section-sub">Kalian sudah jadi alumni — tapi persahabatan tak pernah lulus. Tinggalkan pesan, sapa kawan lama, kenang momen bersama.</p>
+  </div>
+
+  <!-- Form Komentar -->
+  <div class="comment-form-wrap reveal" id="comment-form-wrap">
+    <div class="comment-form-card">
+      <h3 class="comment-form-title">✍️ Tulis Pesanmu</h3>
+      <div class="comment-fields">
+        <div class="field-row">
+          <input type="text" id="c-nama" placeholder="Nama kamu" maxlength="60" class="comment-input">
+          <input type="text" id="c-kelas" placeholder="Kelas dulu (misal: 6A)" maxlength="20" class="comment-input">
+        </div>
+        <textarea id="c-pesan" placeholder="Tulis pesanmu untuk teman-teman alumni... 💬" maxlength="500" class="comment-textarea" rows="3"></textarea>
+        <div class="comment-form-footer">
+          <span class="char-count" id="char-count">0 / 500</span>
+          <button class="btn-kirim" id="btn-kirim" onclick="kirimKomentar()">
+            <span id="kirim-label">Kirim Pesan 🚀</span>
+          </button>
+        </div>
+      </div>
+      <div class="comment-notice" id="comment-notice" style="display:none;"></div>
+    </div>
+  </div>
+
+  <!-- Daftar Komentar -->
+  <div class="comment-list-wrap" id="comment-list-wrap">
+    <div class="comment-list-header">
+      <span id="comment-count-label">Memuat pesan...</span>
+      <button class="btn-refresh" onclick="loadKomentar()">↻ Refresh</button>
+    </div>
+    <div id="comment-list">
+      <div class="comment-loading">
+        <div class="spinner"></div>
+        <p>Memuat pesan alumni...</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- FOOTER -->
 <footer>
   <span class="footer-trophy">🏆</span>
   <div class="footer-title">Achievers • Angkatan 24</div>
   <div class="footer-sub">SDIT Ar-Rahmah Makassar — "Generasi Qurani, Berprestasi, Berakhlak Mulia"</div>
   <div class="footer-divider"></div>
-  <div class="footer-copy">© 2025 Yayasan Ar-Rahmah Sulawesi · Media & Humas</div>
+  <div class="footer-copy">© 2025/2026 Yayasan Ar-Rahmah Sulawesi · Media & Humas</div>
 </footer>
 
 <script>
@@ -1075,6 +1506,34 @@ async function loadAbout() {
   }
 }
 
+// ── GOOGLE PHOTOS THUMBNAIL EXTRACTOR ──
+// Mengubah link album Google Photos menjadi URL thumbnail yang bisa ditampilkan
+function extractGooglePhotosThumbnail(albumLink) {
+  if (!albumLink) return null;
+
+  // Format: https://photos.app.goo.gl/XXXXX (short link) → tidak bisa langsung ambil thumb
+  // Format: https://photos.google.com/share/... atau /album/...
+  // Cara terbaik: gunakan lm.googleusercontent.com dengan ID album yang diekstrak
+  // atau pakai proxy thumbnail jika tersedia di kolom thumbnail_url
+
+  // Coba ekstrak photo/album ID dari berbagai format Google Photos URL
+  const patterns = [
+    /photos\.google\.com\/(?:u\/\d+\/)?album\/([^/?&#]+)/,
+    /photos\.app\.goo\.gl\/([^/?&#]+)/,
+    /photos\.google\.com\/share\/([^/?&#]+)/,
+  ];
+
+  for (const pat of patterns) {
+    const m = albumLink.match(pat);
+    if (m) {
+      // Google Photos tidak punya thumbnail publik yang bisa di-embed langsung via ID
+      // Fallback: gunakan placeholder khusus Google Photos
+      return null; // akan ditangani di bawah
+    }
+  }
+  return null;
+}
+
 // ── LOAD ALBUMS ──
 async function loadAlbums() {
   const grid = document.getElementById('album-grid');
@@ -1096,7 +1555,7 @@ async function loadAlbums() {
     })).filter(r =>
       // buang baris header yang ikut ter-fetch
       r.thumbnail_url !== 'thumbnail_url' && r.album_title !== 'album_title'
-      && (r.album_title || r.thumbnail_url)
+      && (r.album_title || r.thumbnail_url || r.album_link)
     );
 
     if (!rows.length) {
@@ -1116,19 +1575,49 @@ async function loadAlbums() {
     });
 
     // Render cards
-    grid.innerHTML = rows.map(r => `
-      <a class="album-card" href="${r.album_link || '#'}" target="_blank" rel="noopener" data-cat="${r.kategori || ''}">
-        ${r.thumbnail_url
-          ? `<img class="album-thumb" src="${r.thumbnail_url}" alt="${r.album_title}" loading="lazy">`
-          : `<div class="album-thumb-placeholder">📷</div>`
+    // Prioritas thumbnail:
+    // 1. Kalau thumbnail_url diisi manual di Sheets → pakai itu
+    // 2. Kalau thumbnail_url adalah link foto tunggal Google Photos → coba embed
+    // 3. Kalau hanya ada album_link → tampilkan placeholder Google Photos
+    grid.innerHTML = rows.map(r => {
+      let thumbHtml = '';
+
+      if (r.thumbnail_url) {
+        // Cek apakah ini link foto langsung dari Google Photos
+        // Format foto: https://lh3.googleusercontent.com/... atau https://photos.google.com/photo/...
+        if (r.thumbnail_url.includes('lh3.googleusercontent.com') || 
+            r.thumbnail_url.includes('lh4.googleusercontent.com') ||
+            r.thumbnail_url.includes('googleusercontent.com')) {
+          // Tambahkan parameter resize Google untuk buat thumbnail 400px
+          const baseUrl = r.thumbnail_url.replace(/=w\d+-h\d+.*$/, '').replace(/=s\d+.*$/, '');
+          thumbHtml = `<img class="album-thumb" src="${baseUrl}=w400-h220-c" alt="${r.album_title}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'album-thumb-placeholder\\'>📷</div>'">`;
+        } else if (r.thumbnail_url.startsWith('http')) {
+          // URL gambar biasa (imgur, dll)
+          thumbHtml = `<img class="album-thumb" src="${r.thumbnail_url}" alt="${r.album_title}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'album-thumb-placeholder\\'>📷</div>'">`;
+        } else {
+          thumbHtml = `<div class="album-thumb-placeholder">📷</div>`;
         }
-        <div class="album-info">
-          <div class="album-tag">${r.kategori || 'Album'}</div>
-          <div class="album-title">${r.album_title || 'Album Foto'}</div>
-          <div class="album-link-icon">📂 Buka di Google Photos</div>
-        </div>
-      </a>
-    `).join('');
+      } else {
+        // Tidak ada thumbnail → tampilkan placeholder Google Photos
+        thumbHtml = `<div class="album-thumb-placeholder gphoto-placeholder">
+          <div style="text-align:center;">
+            <div style="font-size:2.2rem;margin-bottom:6px;">📸</div>
+            <div style="font-size:0.7rem;font-weight:700;color:var(--sky-dark);opacity:0.7;">Google Photos</div>
+          </div>
+        </div>`;
+      }
+
+      return `
+        <a class="album-card" href="${r.album_link || '#'}" target="_blank" rel="noopener" data-cat="${r.kategori || ''}">
+          ${thumbHtml}
+          <div class="album-info">
+            <div class="album-tag">${r.kategori || 'Album'}</div>
+            <div class="album-title">${r.album_title || 'Album Foto'}</div>
+            <div class="album-link-icon">📂 Buka di Google Photos</div>
+          </div>
+        </a>
+      `;
+    }).join('');
 
   } catch(e) {
     console.error('Album load error:', e);
@@ -1277,6 +1766,280 @@ document.getElementById('btn-next').addEventListener('click', () => {
 document.getElementById('btn-fullscreen').addEventListener('click', () => {
   window.open(PDF_URL, '_blank');
 });
+
+
+// ─────────────────────────────────────────────
+// KOMENTAR ALUMNI — Google Sheets backend
+// Isi KOMENTAR_SCRIPT_URL dengan URL deploy Apps Script-mu
+// ─────────────────────────────────────────────
+const KOMENTAR_SCRIPT_URL = ''; 
+// ↑ Kosong = mode demo (komentar tersimpan di localStorage)
+// ↑ Isi dengan URL Google Apps Script deploy-mu untuk live mode
+
+// Storage lokal sebagai fallback / demo mode
+let localComments = [];
+
+function localKey() { return 'ach24_comments_v1'; }
+
+function loadLocalComments() {
+  try { return JSON.parse(localStorage.getItem(localKey()) || '[]'); }
+  catch { return []; }
+}
+
+function saveLocalComments(arr) {
+  try { localStorage.setItem(localKey(), JSON.stringify(arr)); } catch {}
+}
+
+function generateId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+}
+
+function formatTime(ts) {
+  const d = new Date(ts);
+  const now = new Date();
+  const diff = now - d;
+  if (diff < 60000)   return 'baru saja';
+  if (diff < 3600000) return `${Math.floor(diff/60000)} menit lalu`;
+  if (diff < 86400000) return `${Math.floor(diff/3600000)} jam lalu`;
+  if (diff < 604800000) return `${Math.floor(diff/86400000)} hari lalu`;
+  return d.toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' });
+}
+
+function getInitial(name) {
+  return (name || '?').trim().charAt(0).toUpperCase();
+}
+
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// ── Render semua komentar ──
+function renderComments(comments) {
+  const list = document.getElementById('comment-list');
+  const countLabel = document.getElementById('comment-count-label');
+
+  if (!comments.length) {
+    list.innerHTML = `<div class="comment-empty">💬 Belum ada pesan. Jadilah yang pertama menyapa!</div>`;
+    countLabel.textContent = '0 Pesan';
+    return;
+  }
+
+  countLabel.textContent = `${comments.length} Pesan Alumni`;
+
+  list.innerHTML = comments.map((c, idx) => `
+    <div class="comment-item" id="comment-${c.id}">
+      <div class="comment-item-header">
+        <div class="comment-avatar">${escHtml(getInitial(c.nama))}</div>
+        <div class="comment-meta">
+          <span class="comment-author">${escHtml(c.nama)}</span>
+          ${c.kelas ? `<span class="comment-kelas">${escHtml(c.kelas)}</span>` : ''}
+          <div class="comment-time">${formatTime(c.timestamp)}</div>
+        </div>
+      </div>
+      <div class="comment-text">${escHtml(c.pesan)}</div>
+      <div class="comment-actions">
+        <button class="btn-balas" onclick="toggleReplyForm('${c.id}')">💬 Balas</button>
+      </div>
+
+      <!-- Form balas -->
+      <div class="reply-form" id="reply-form-${c.id}">
+        <div class="reply-form-inner">
+          <div class="reply-input-row">
+            <input type="text" class="reply-name-input" id="rname-${c.id}" placeholder="Nama kamu" maxlength="60">
+            <textarea class="reply-textarea" id="rtext-${c.id}" placeholder="Tulis balasanmu... 💬" maxlength="300" rows="2"></textarea>
+          </div>
+          <div class="reply-form-actions">
+            <button class="btn-reply-cancel" onclick="toggleReplyForm('${c.id}')">Batal</button>
+            <button class="btn-reply-send" onclick="kirimBalasan('${c.id}')">Kirim Balasan ↩</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Balasan -->
+      ${c.replies && c.replies.length ? `
+        <div class="replies-wrap">
+          ${c.replies.map(r => `
+            <div class="reply-item">
+              <div class="reply-author">↩ ${escHtml(r.nama)}</div>
+              <div class="reply-text">${escHtml(r.pesan)}</div>
+              <div class="reply-time">${formatTime(r.timestamp)}</div>
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+    </div>
+  `).join('');
+}
+
+// ── Load komentar ──
+async function loadKomentar() {
+  const list = document.getElementById('comment-list');
+  list.innerHTML = `<div class="comment-loading"><div class="spinner"></div><p>Memuat pesan alumni...</p></div>`;
+
+  if (!KOMENTAR_SCRIPT_URL) {
+    // Mode demo / localStorage
+    localComments = loadLocalComments();
+    renderComments(localComments);
+    return;
+  }
+
+  try {
+    const res = await fetch(`${KOMENTAR_SCRIPT_URL}?action=getComments`);
+    const data = await res.json();
+    localComments = data.comments || [];
+    renderComments(localComments);
+  } catch(e) {
+    console.error('Load komentar error:', e);
+    localComments = loadLocalComments();
+    renderComments(localComments);
+  }
+}
+
+// ── Kirim komentar baru ──
+async function kirimKomentar() {
+  const nama   = document.getElementById('c-nama').value.trim();
+  const kelas  = document.getElementById('c-kelas').value.trim();
+  const pesan  = document.getElementById('c-pesan').value.trim();
+  const notice = document.getElementById('comment-notice');
+  const btn    = document.getElementById('btn-kirim');
+  const label  = document.getElementById('kirim-label');
+
+  if (!nama) { showNotice('⚠️ Nama tidak boleh kosong.', 'error'); return; }
+  if (!pesan) { showNotice('⚠️ Pesan tidak boleh kosong.', 'error'); return; }
+  if (pesan.length < 3) { showNotice('⚠️ Pesan terlalu singkat.', 'error'); return; }
+
+  btn.disabled = true;
+  label.textContent = 'Mengirim...';
+
+  const newComment = {
+    id: generateId(),
+    nama,
+    kelas,
+    pesan,
+    timestamp: Date.now(),
+    replies: []
+  };
+
+  if (!KOMENTAR_SCRIPT_URL) {
+    // Demo mode
+    localComments.unshift(newComment);
+    saveLocalComments(localComments);
+    renderComments(localComments);
+    document.getElementById('c-nama').value = '';
+    document.getElementById('c-kelas').value = '';
+    document.getElementById('c-pesan').value = '';
+    document.getElementById('char-count').textContent = '0 / 500';
+    showNotice('✅ Pesanmu terkirim! Semoga sahabat lama membacanya 🎉', 'success');
+    btn.disabled = false;
+    label.textContent = 'Kirim Pesan 🚀';
+    return;
+  }
+
+  try {
+    const res = await fetch(KOMENTAR_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'addComment', ...newComment })
+    });
+    const data = await res.json();
+    if (data.success) {
+      localComments.unshift(newComment);
+      renderComments(localComments);
+      document.getElementById('c-nama').value = '';
+      document.getElementById('c-kelas').value = '';
+      document.getElementById('c-pesan').value = '';
+      document.getElementById('char-count').textContent = '0 / 500';
+      showNotice('✅ Pesanmu terkirim! Semoga sahabat lama membacanya 🎉', 'success');
+    } else {
+      showNotice('⚠️ Gagal mengirim. Coba lagi.', 'error');
+    }
+  } catch(e) {
+    // Fallback ke localStorage
+    localComments.unshift(newComment);
+    saveLocalComments(localComments);
+    renderComments(localComments);
+    showNotice('✅ Pesan tersimpan! (mode offline)', 'success');
+  }
+
+  btn.disabled = false;
+  label.textContent = 'Kirim Pesan 🚀';
+}
+
+// ── Toggle form balas ──
+function toggleReplyForm(commentId) {
+  const form = document.getElementById(`reply-form-${commentId}`);
+  if (!form) return;
+  const isOpen = form.classList.toggle('open');
+  if (isOpen) document.getElementById(`rname-${commentId}`).focus();
+}
+
+// ── Kirim balasan ──
+async function kirimBalasan(commentId) {
+  const namaEl  = document.getElementById(`rname-${commentId}`);
+  const textEl  = document.getElementById(`rtext-${commentId}`);
+  const btnEl   = document.querySelector(`#reply-form-${commentId} .btn-reply-send`);
+
+  const nama  = namaEl.value.trim();
+  const pesan = textEl.value.trim();
+
+  if (!nama)  { alert('Nama tidak boleh kosong.'); return; }
+  if (!pesan) { alert('Pesan balasan tidak boleh kosong.'); return; }
+
+  btnEl.disabled = true;
+  btnEl.textContent = 'Mengirim...';
+
+  const newReply = { id: generateId(), nama, pesan, timestamp: Date.now() };
+
+  const commentIdx = localComments.findIndex(c => c.id === commentId);
+  if (commentIdx === -1) { btnEl.disabled = false; btnEl.textContent = 'Kirim Balasan ↩'; return; }
+
+  if (!KOMENTAR_SCRIPT_URL) {
+    localComments[commentIdx].replies = localComments[commentIdx].replies || [];
+    localComments[commentIdx].replies.push(newReply);
+    saveLocalComments(localComments);
+    renderComments(localComments);
+    return;
+  }
+
+  try {
+    const res = await fetch(KOMENTAR_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'addReply', commentId, ...newReply })
+    });
+    const data = await res.json();
+    if (data.success || true) {
+      localComments[commentIdx].replies = localComments[commentIdx].replies || [];
+      localComments[commentIdx].replies.push(newReply);
+      saveLocalComments(localComments);
+      renderComments(localComments);
+    }
+  } catch {
+    localComments[commentIdx].replies = localComments[commentIdx].replies || [];
+    localComments[commentIdx].replies.push(newReply);
+    saveLocalComments(localComments);
+    renderComments(localComments);
+  }
+}
+
+// ── Helper notif ──
+function showNotice(msg, type) {
+  const el = document.getElementById('comment-notice');
+  el.textContent = msg;
+  el.className = `comment-notice notice-${type}`;
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 4500);
+}
+
+// ── Char counter ──
+document.getElementById('c-pesan').addEventListener('input', function() {
+  document.getElementById('char-count').textContent = `${this.value.length} / 500`;
+});
+
+// Init komentar
+loadKomentar();
 
 // ── SCROLL REVEAL ──
 const observer = new IntersectionObserver((entries) => {
