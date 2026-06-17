@@ -1594,7 +1594,11 @@ async function loadGaleri() {
       photo_url : r.photo_url  || r.a || '',
       caption   : r.caption    || r.b || '',
     })).filter(r =>
-      r.photo_url !== 'photo_url' && r.photo_url
+      // buang baris header yang ikut ter-fetch
+      r.photo_url !== 'photo_url' &&
+      r.caption   !== 'caption'   &&
+      r.photo_url !== '' &&
+      r.photo_url.startsWith('http')
     );
 
     if (!rows.length) {
@@ -2061,20 +2065,14 @@ async function loadKomentar() {
   const list = document.getElementById('comment-list');
   list.innerHTML = `<div class="comment-loading"><div class="spinner"></div><p>Memuat pesan alumni...</p></div>`;
 
-  if (!KOMENTAR_SCRIPT_URL) {
-    // Mode demo / localStorage
-    localComments = loadLocalComments();
-    renderComments(localComments);
-    return;
-  }
-
   try {
     const res = await fetch(`${KOMENTAR_SCRIPT_URL}?action=getComments`);
     const data = await res.json();
     localComments = data.comments || [];
+    saveLocalComments(localComments);
     renderComments(localComments);
   } catch(e) {
-    console.error('Load komentar error:', e);
+    console.warn('Load dari GAS gagal, pakai cache lokal:', e);
     localComments = loadLocalComments();
     renderComments(localComments);
   }
@@ -2085,11 +2083,10 @@ async function kirimKomentar() {
   const nama   = document.getElementById('c-nama').value.trim();
   const kelas  = document.getElementById('c-kelas').value.trim();
   const pesan  = document.getElementById('c-pesan').value.trim();
-  const notice = document.getElementById('comment-notice');
   const btn    = document.getElementById('btn-kirim');
   const label  = document.getElementById('kirim-label');
 
-  if (!nama) { showNotice('⚠️ Nama tidak boleh kosong.', 'error'); return; }
+  if (!nama)  { showNotice('⚠️ Nama tidak boleh kosong.', 'error'); return; }
   if (!pesan) { showNotice('⚠️ Pesan tidak boleh kosong.', 'error'); return; }
   if (pesan.length < 3) { showNotice('⚠️ Pesan terlalu singkat.', 'error'); return; }
 
@@ -2098,71 +2095,60 @@ async function kirimKomentar() {
 
   const newComment = {
     id: generateId(),
-    nama,
-    kelas,
-    pesan,
+    nama, kelas, pesan,
     timestamp: Date.now(),
     replies: []
   };
 
-  if (!KOMENTAR_SCRIPT_URL) {
-    // Demo mode
+  try {
+    // GAS tidak support JSON POST langsung dari browser karena CORS
+    // Gunakan form-encoded via fetch dengan mode no-cors, lalu kirim sebagai GET param
+    const params = new URLSearchParams({
+      action    : 'addComment',
+      id        : newComment.id,
+      nama      : newComment.nama,
+      kelas     : newComment.kelas,
+      pesan     : newComment.pesan,
+      timestamp : newComment.timestamp
+    });
+
+    await fetch(`${KOMENTAR_SCRIPT_URL}?${params.toString()}`, {
+      method: 'GET',
+      mode  : 'no-cors'
+    });
+
+    // Simpan lokal dulu (no-cors tidak bisa baca response)
     localComments.unshift(newComment);
     saveLocalComments(localComments);
     renderComments(localComments);
-    document.getElementById('c-nama').value = '';
+
+    document.getElementById('c-nama').value  = '';
     document.getElementById('c-kelas').value = '';
     document.getElementById('c-pesan').value = '';
     document.getElementById('char-count').textContent = '0 / 500';
     showNotice('✅ Pesanmu terkirim! Semoga sahabat lama membacanya 🎉', 'success');
-    btn.disabled = false;
-    label.textContent = 'Kirim Pesan 🚀';
-    return;
-  }
 
-  try {
-    const res = await fetch(KOMENTAR_SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'addComment', ...newComment })
-    });
-    const data = await res.json();
-    if (data.success) {
-      localComments.unshift(newComment);
-      renderComments(localComments);
-      document.getElementById('c-nama').value = '';
-      document.getElementById('c-kelas').value = '';
-      document.getElementById('c-pesan').value = '';
-      document.getElementById('char-count').textContent = '0 / 500';
-      showNotice('✅ Pesanmu terkirim! Semoga sahabat lama membacanya 🎉', 'success');
-    } else {
-      showNotice('⚠️ Gagal mengirim. Coba lagi.', 'error');
-    }
+    // Reload dari server setelah 2 detik untuk sinkronisasi
+    setTimeout(loadKomentar, 2000);
+
   } catch(e) {
-    // Fallback ke localStorage
+    console.error('Kirim komentar error:', e);
+    // Fallback: simpan lokal
     localComments.unshift(newComment);
     saveLocalComments(localComments);
     renderComments(localComments);
-    showNotice('✅ Pesan tersimpan! (mode offline)', 'success');
+    showNotice('✅ Pesan tersimpan! (akan sinkron saat refresh)', 'success');
   }
 
   btn.disabled = false;
   label.textContent = 'Kirim Pesan 🚀';
 }
 
-// ── Toggle form balas ──
-function toggleReplyForm(commentId) {
-  const form = document.getElementById(`reply-form-${commentId}`);
-  if (!form) return;
-  const isOpen = form.classList.toggle('open');
-  if (isOpen) document.getElementById(`rname-${commentId}`).focus();
-}
-
 // ── Kirim balasan ──
 async function kirimBalasan(commentId) {
-  const namaEl  = document.getElementById(`rname-${commentId}`);
-  const textEl  = document.getElementById(`rtext-${commentId}`);
-  const btnEl   = document.querySelector(`#reply-form-${commentId} .btn-reply-send`);
+  const namaEl = document.getElementById(`rname-${commentId}`);
+  const textEl = document.getElementById(`rtext-${commentId}`);
+  const btnEl  = document.querySelector(`#reply-form-${commentId} .btn-reply-send`);
 
   const nama  = namaEl.value.trim();
   const pesan = textEl.value.trim();
@@ -2175,36 +2161,35 @@ async function kirimBalasan(commentId) {
 
   const newReply = { id: generateId(), nama, pesan, timestamp: Date.now() };
 
-  const commentIdx = localComments.findIndex(c => c.id === commentId);
-  if (commentIdx === -1) { btnEl.disabled = false; btnEl.textContent = 'Kirim Balasan ↩'; return; }
-
-  if (!KOMENTAR_SCRIPT_URL) {
-    localComments[commentIdx].replies = localComments[commentIdx].replies || [];
-    localComments[commentIdx].replies.push(newReply);
-    saveLocalComments(localComments);
-    renderComments(localComments);
-    return;
-  }
-
   try {
-    const res = await fetch(KOMENTAR_SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'addReply', commentId, ...newReply })
+    const params = new URLSearchParams({
+      action    : 'addReply',
+      id        : newReply.id,
+      commentId : commentId,
+      nama      : newReply.nama,
+      pesan     : newReply.pesan,
+      timestamp : newReply.timestamp
     });
-    const data = await res.json();
-    if (data.success || true) {
-      localComments[commentIdx].replies = localComments[commentIdx].replies || [];
-      localComments[commentIdx].replies.push(newReply);
-      saveLocalComments(localComments);
-      renderComments(localComments);
-    }
-  } catch {
-    localComments[commentIdx].replies = localComments[commentIdx].replies || [];
-    localComments[commentIdx].replies.push(newReply);
+
+    await fetch(`${KOMENTAR_SCRIPT_URL}?${params.toString()}`, {
+      method: 'GET',
+      mode  : 'no-cors'
+    });
+
+  } catch(e) {
+    console.warn('Kirim balasan error:', e);
+  }
+
+  // Update lokal langsung tanpa tunggu response
+  const idx = localComments.findIndex(c => c.id === commentId);
+  if (idx !== -1) {
+    localComments[idx].replies = localComments[idx].replies || [];
+    localComments[idx].replies.push(newReply);
     saveLocalComments(localComments);
     renderComments(localComments);
   }
+
+  setTimeout(loadKomentar, 2000);
 }
 
 // ── Helper notif ──
