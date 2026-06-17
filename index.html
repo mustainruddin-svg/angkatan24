@@ -306,7 +306,115 @@
   .section-header { text-align: center; }
   .section-header .section-sub { margin-left: auto; margin-right: auto; }
 
-  /* ── ABOUT ── */
+  /* ── LIGHTBOX ── */
+  .lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0,0,0,0.92);
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    backdrop-filter: blur(6px);
+  }
+  .lightbox.open {
+    display: flex;
+    animation: lbFadeIn 0.22s ease;
+  }
+  @keyframes lbFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .lb-inner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: min(90vw, 900px);
+    max-height: 90vh;
+  }
+
+  #lb-img {
+    max-width: 100%;
+    max-height: 78vh;
+    border-radius: 12px;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+    object-fit: contain;
+    display: block;
+    animation: lbZoomIn 0.25s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes lbZoomIn {
+    from { transform: scale(0.88); opacity: 0; }
+    to   { transform: scale(1);    opacity: 1; }
+  }
+
+  .lb-caption {
+    margin-top: 14px;
+    color: rgba(255,255,255,0.9);
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.2rem;
+    text-align: center;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  }
+
+  .lb-counter {
+    margin-top: 6px;
+    color: rgba(255,255,255,0.45);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  .lb-close {
+    position: fixed;
+    top: 20px; right: 24px;
+    background: rgba(255,255,255,0.12);
+    border: 1.5px solid rgba(255,255,255,0.25);
+    color: white;
+    border-radius: 50%;
+    width: 44px; height: 44px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+    z-index: 10001;
+  }
+  .lb-close:hover { background: rgba(255,255,255,0.25); }
+
+  .lb-prev, .lb-next {
+    position: fixed;
+    top: 50%; transform: translateY(-50%);
+    background: rgba(255,255,255,0.1);
+    border: 1.5px solid rgba(255,255,255,0.2);
+    color: white;
+    border-radius: 50%;
+    width: 52px; height: 52px;
+    font-size: 1.8rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    z-index: 10001;
+    line-height: 1;
+  }
+  .lb-prev { left: 16px; }
+  .lb-next { right: 16px; }
+  .lb-prev:hover, .lb-next:hover {
+    background: rgba(255,255,255,0.25);
+    transform: translateY(-50%) scale(1.08);
+  }
+
+  @media (max-width: 600px) {
+    .lb-prev { left: 8px; }
+    .lb-next { right: 8px; }
+    .lb-prev, .lb-next { width: 42px; height: 42px; font-size: 1.4rem; }
+  }
+
+  /* Gallery loading state */
+  #gallery-grid .loading-state {
+    grid-column: 1 / -1;
+  }
   #about {
     background: white;
     position: relative;
@@ -1284,35 +1392,30 @@
   </p>
 </section>
 
+<!-- LIGHTBOX -->
+<div id="lightbox" class="lightbox" onclick="closeLightbox()">
+  <button class="lb-close" onclick="closeLightbox()">✕</button>
+  <button class="lb-prev" onclick="lbNav(-1); event.stopPropagation()">‹</button>
+  <button class="lb-next" onclick="lbNav(1); event.stopPropagation()">›</button>
+  <div class="lb-inner" onclick="event.stopPropagation()">
+    <img id="lb-img" src="" alt="">
+    <div id="lb-caption" class="lb-caption"></div>
+    <div id="lb-counter" class="lb-counter"></div>
+  </div>
+</div>
+
 <!-- GALLERY PREVIEW -->
 <section id="galeri">
   <div class="section-header reveal">
     <div class="section-tag">Momen Terbaik</div>
     <h2 class="section-title">Galeri Foto</h2>
-    <p class="section-sub">Setiap foto menyimpan cerita yang tak terlupakan.</p>
+    <p class="section-sub">Setiap foto menyimpan cerita yang tak terlupakan. Klik untuk memperbesar.</p>
   </div>
 
   <div class="gallery-grid reveal" id="gallery-grid">
-    <!-- Hardcoded preview photos from Imgur -->
-    <div class="polaroid">
-      <img src="https://i.imgur.com/JsOEKh9.jpg" alt="Momen 1" loading="lazy">
-      <span class="polaroid-caption">Kenangan Indah ✨</span>
-    </div>
-    <div class="polaroid">
-      <img src="https://i.imgur.com/VjHADtb.jpg" alt="Momen 2" loading="lazy">
-      <span class="polaroid-caption">Bersama Sahabat 🌟</span>
-    </div>
-    <div class="polaroid">
-      <img src="https://i.imgur.com/3cqnEZx.jpg" alt="Momen 3" loading="lazy">
-      <span class="polaroid-caption">Prestasi Terbaik 🏆</span>
-    </div>
-    <div class="polaroid">
-      <img src="https://i.imgur.com/kG6SVu4.jpg" alt="Momen 4" loading="lazy">
-      <span class="polaroid-caption">Cita-cita Tinggi ⭐</span>
-    </div>
-    <div class="polaroid">
-      <img src="https://i.imgur.com/4eDMCU5.jpg" alt="Momen 5" loading="lazy">
-      <span class="polaroid-caption">Senyum Pemenang 😊</span>
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <div>Memuat galeri...</div>
     </div>
   </div>
 </section>
@@ -1477,6 +1580,88 @@ async function fetchSheet(sheetName) {
   console.log(`[${sheetName}] ${rows.length} baris:`, rows);
   return rows;
 }
+
+// ── GALERI FOTO — dynamic dari Sheets ──
+let galeriItems = []; // [{photo_url, caption}]
+let lbIndex = 0;
+
+async function loadGaleri() {
+  const grid = document.getElementById('gallery-grid');
+  try {
+    let rows = await fetchSheet('Galeri');
+
+    rows = rows.map(r => ({
+      photo_url : r.photo_url  || r.a || '',
+      caption   : r.caption    || r.b || '',
+    })).filter(r =>
+      r.photo_url !== 'photo_url' && r.photo_url
+    );
+
+    if (!rows.length) {
+      grid.innerHTML = '<div class="loading-state">Belum ada foto di galeri.</div>';
+      return;
+    }
+
+    galeriItems = rows;
+
+    grid.innerHTML = rows.map((r, idx) => `
+      <div class="polaroid" onclick="openLightbox(${idx})" title="Klik untuk perbesar">
+        <img
+          src="${r.photo_url}"
+          alt="${r.caption || 'Foto kenangan'}"
+          loading="lazy"
+          onerror="this.closest('.polaroid').style.display='none'"
+        >
+        <span class="polaroid-caption">${r.caption || 'Kenangan Indah ✨'}</span>
+      </div>
+    `).join('');
+
+  } catch(e) {
+    console.error('Galeri load error:', e);
+    grid.innerHTML = `<div class="loading-state">⚠️ Gagal memuat galeri.<br>
+      <small>Pastikan sheet <b>Galeri</b> sudah ada dan publik.<br>
+      Kolom: <b>photo_url</b> | <b>caption</b></small></div>`;
+  }
+}
+
+// ── LIGHTBOX ENGINE ──
+function openLightbox(idx) {
+  lbIndex = idx;
+  renderLightbox();
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function lbNav(dir) {
+  lbIndex = (lbIndex + dir + galeriItems.length) % galeriItems.length;
+  renderLightbox();
+}
+
+function renderLightbox() {
+  const item = galeriItems[lbIndex];
+  const img  = document.getElementById('lb-img');
+  img.style.animation = 'none';
+  img.offsetHeight; // reflow
+  img.style.animation = '';
+  img.src = item.photo_url;
+  img.alt = item.caption || '';
+  document.getElementById('lb-caption').textContent = item.caption || '';
+  document.getElementById('lb-counter').textContent = `${lbIndex + 1} / ${galeriItems.length}`;
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', e => {
+  const lb = document.getElementById('lightbox');
+  if (!lb.classList.contains('open')) return;
+  if (e.key === 'ArrowRight') lbNav(1);
+  if (e.key === 'ArrowLeft')  lbNav(-1);
+  if (e.key === 'Escape')     closeLightbox();
+});
 
 // ── LOAD ABOUT ──
 async function loadAbout() {
@@ -1772,9 +1957,7 @@ document.getElementById('btn-fullscreen').addEventListener('click', () => {
 // KOMENTAR ALUMNI — Google Sheets backend
 // Isi KOMENTAR_SCRIPT_URL dengan URL deploy Apps Script-mu
 // ─────────────────────────────────────────────
-const KOMENTAR_SCRIPT_URL = ''; 
-// ↑ Kosong = mode demo (komentar tersimpan di localStorage)
-// ↑ Isi dengan URL Google Apps Script deploy-mu untuk live mode
+const KOMENTAR_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyPoD3WhdMEZ9dTiLF3n1rRbmy6DDXriOWlkbpR1M3BI7WPqNFfYRP-79cO1kNBnyz3/exec';
 
 // Storage lokal sebagai fallback / demo mode
 let localComments = [];
@@ -2049,6 +2232,7 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
 // ── INIT ──
 loadAbout();
+loadGaleri();
 loadAlbums();
 loadVideos();
 loadPDF();
